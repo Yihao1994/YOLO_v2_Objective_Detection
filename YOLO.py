@@ -150,7 +150,9 @@ def predict(sess, image_file):
     return out_scores, out_boxes, out_classes
 
 
+
 sess = K.get_session()
+
 
 
 #Model loading
@@ -163,7 +165,7 @@ yolo_outputs = yolo_head(yolo_model.output, anchors, len(class_names))
 # In[Pic loading & Testing]
 #Choose image
 tic = time.clock()
-image_file = "test16.jpg"
+image_file = "test21.jpg"
 image_original = cv2.imread("images/" + image_file)
 height = image_original.shape[0]
 width = image_original.shape[1]
@@ -179,3 +181,5 @@ print('Objective Detection for the ' + image_file)
 out_scores, out_boxes, out_classes = predict(sess, image_file)
 toc = time.clock()
 print('Spending time:', (toc - tic), 'sec')
+
+

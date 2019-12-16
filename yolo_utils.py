@@ -4,6 +4,7 @@ import os
 import random
 from keras import backend as K
 import cv2
+import matplotlib.pyplot as plt
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -39,14 +40,32 @@ def scale_boxes(boxes, image_shape):
     boxes = boxes * image_dims
     return boxes
 
+
+
 def preprocess_image(img_path, model_image_size):
     image_type = imghdr.what(img_path)
+    '''
     image = Image.open(img_path)
+    plt.figure()
+    plt.imshow(image)
     resized_image = image.resize(tuple(reversed(model_image_size)), Image.BICUBIC)
-    image_data = np.array(resized_image, dtype='float32')
-    image_data /= 255.
+    image_data = np.array(resized_image, dtype='float32')/255
+    
+    '''
+    #Code changed  here is just in case of image fliping randomly.
+    image = cv2.imread(img_path)
+    image = image[...,::-1]
+    image1 = image.astype(np.float32)   #Hold the data for translating to Image
+    image_resized = cv2.resize(image1, (model_image_size[0], model_image_size[1]), cv2.INTER_CUBIC)
+    image_data = image_resized/255.
+    
+    #The dtype of 'image'  must be Image
+    image = Image.fromarray(image, 'RGB')
     image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
+    
     return image, image_data
+
+
 
 def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors):
     
@@ -81,3 +100,5 @@ def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors):
         draw.rectangle([tuple(text_origin), tuple(text_origin + label_size)], fill=colors[c])
         draw.text(text_origin, label, fill=(0, 0, 0), font=font)
         del draw
+        
+        
